@@ -1,7 +1,7 @@
 # gravity-form-upi-payment
 
 === Gravity Forms UPI Payment ===
-Contributors: yourname
+Contributors: sachin jangir
 Donate link: http://eworldservice.com
 Tags: gravity forms, UPI, payment
 Requires at least: 4.0
