@@ -23,8 +23,8 @@ class GFUPIPayment extends GFPaymentAddOn {
         // Get total amount from Gravity Form entry
         $amount = GFCommon::get_order_total($form, $entry);
 
-        // Assume UPI ID is provided in a specific field, replace `your_upi_id_field_id` with the actual field ID
-        $upi_id = rgar($entry, 'your_upi_id_field_id');
+        // Get UPI ID from the settings
+        $upi_id = get_option('gf_upi_payment_upi_id');
 
         // Call UPI payment gateway API
         $response = $this->process_upi_payment($upi_id, $amount);
