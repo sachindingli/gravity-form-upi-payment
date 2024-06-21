@@ -1,17 +1,23 @@
-/* Add your custom styles here */
-.wrap h1 {
-    color: #23282d;
-    font-size: 24px;
-    margin-bottom: 20px;
+/* style.css */
+.wrap {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 4px;
 }
 
-.wrap form {
-    background: #fff;
-    padding: 20px;
-    border: 1px solid #e5e5e5;
-    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+h1 {
+    margin-bottom: 20px;
+    color: #333;
 }
 
 input.regular-text {
-    width: 25em;
+    width: 100%;
+    max-width: 400px;
+    padding: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
 }
