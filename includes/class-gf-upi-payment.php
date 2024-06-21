@@ -1,4 +1,5 @@
 <?php
+require_once WP_PLUGIN_DIR . '/gravityforms/includes/addon/class-gf-payment-addon.php';
 if (!class_exists('GFForms')) {
     die('Gravity Forms is required for this plugin.');
 }
