@@ -1,4 +1,3 @@
-<?php
 function gf_upi_payment_settings_page() {
     ?>
     <div class="wrap">
@@ -11,5 +10,12 @@ function gf_upi_payment_settings_page() {
             ?>
         </form>
     </div>
+    <?php
+}
+
+function gf_upi_payment_api_url_callback() {
+    $api_url = get_option('gf_upi_payment_api_url');
+    ?>
+    <input type="text" name="gf_upi_payment_api_url" value="<?php echo esc_attr($api_url); ?>" class="regular-text" />
     <?php
 }
