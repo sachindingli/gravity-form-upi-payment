@@ -13,11 +13,36 @@ h1 {
     color: #333;
 }
 
-input.regular-text {
+input.regular-text,
+textarea {
     width: 100%;
     max-width: 400px;
-    padding: 5px;
+    padding: 8px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 4px;
+    margin-bottom: 10px;
+}
+
+button.button-primary {
+    padding: 8px 16px;
+    font-size: 16px;
+    background-color: #0073aa;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.settings-error {
+    background-color: #f2dede;
+    color: #a94442;
+    border-left: 4px solid #a94442;
+    padding: 8px;
+    margin-top: 10px;
+    border-radius: 4px;
+}
+
+.settings-error p {
+    margin: 0;
 }
