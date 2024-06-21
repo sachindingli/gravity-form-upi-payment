@@ -22,6 +22,7 @@ function gf_upi_payment_upi_id_callback() {
     $upi_id = get_option('gf_upi_payment_upi_id');
     ?>
     <input type="text" name="gf_upi_payment_upi_id" value="<?php echo esc_attr($upi_id); ?>" class="regular-text" />
+    <p class="description"><?php _e('Enter your default UPI ID.', 'gf-upi-payment'); ?></p>
     <?php
 }
 
@@ -29,12 +30,13 @@ function gf_upi_payment_api_url_callback() {
     $api_url = get_option('gf_upi_payment_api_url');
     ?>
     <input type="text" name="gf_upi_payment_api_url" value="<?php echo esc_attr($api_url); ?>" class="regular-text" />
+    <p class="description"><?php _e('Enter the UPI Payment API URL.', 'gf-upi-payment'); ?></p>
     <?php
 }
 
 function gf_upi_payment_register_settings() {
-    register_setting('gf_upi_payment_settings_group', 'gf_upi_payment_upi_id');
-    register_setting('gf_upi_payment_settings_group', 'gf_upi_payment_api_url');
+    register_setting('gf_upi_payment_settings_group', 'gf_upi_payment_upi_id', 'sanitize_text_field');
+    register_setting('gf_upi_payment_settings_group', 'gf_upi_payment_api_url', 'esc_url_raw');
     add_settings_section(
         'gf_upi_payment_main_section',
         __('Main Settings', 'gf-upi-payment'),
