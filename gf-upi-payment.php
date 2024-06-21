@@ -13,14 +13,6 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
 
-// Ensure Gravity Forms is active
-if (!class_exists('GFForms')) {
-    add_action('admin_notices', function() {
-        echo '<div class="notice notice-error"><p>' . __('Gravity Forms must be installed and activated for the Gravity Forms UPI Payment plugin to work.', 'gf-upi-payment') . '</p></div>';
-    });
-    return;
-}
-
 // Include the main class
 require_once plugin_dir_path(__FILE__) . 'includes/class-gf-upi-payment.php';
 
@@ -51,3 +43,56 @@ function gf_upi_payment_enqueue_assets($hook_suffix) {
     }
 }
 add_action('admin_enqueue_scripts', 'gf_upi_payment_enqueue_assets');
+
+function gf_upi_payment_settings_page() {
+    ?>
+    <div class="wrap">
+        <h1><?php _e('UPI Payment Settings', 'gf-upi-payment'); ?></h1>
+        <form method="post" action="options.php">
+            <?php
+            settings_fields('gf_upi_payment_settings_group');
+            do_settings_sections('gf-upi-payment');
+            submit_button();
+            ?>
+        </form>
+    </div>
+    <?php
+}
+
+function gf_upi_payment_api_url_callback() {
+    $api_url = get_option('gf_upi_payment_api_url');
+    ?>
+    <input type="url" name="gf_upi_payment_api_url" value="<?php echo esc_attr($api_url); ?>" class="regular-text" />
+    <?php
+}
+
+function gf_upi_payment_register_settings() {
+    register_setting('gf_upi_payment_settings_group', 'gf_upi_payment_api_url', array(
+        'type' => 'string',
+        'sanitize_callback' => 'esc_url_raw',
+        'validate_callback' => 'gf_upi_payment_validate_api_url',
+    ));
+}
+
+function gf_upi_payment_validate_api_url($input) {
+    if (!filter_var($input, FILTER_VALIDATE_URL)) {
+        add_settings_error('gf_upi_payment_api_url', 'invalid_api_url', __('Invalid API URL. Please enter a valid URL.', 'gf-upi-payment'));
+        return get_option('gf_upi_payment_api_url');
+    }
+    return $input;
+}
+
+// Register settings and callbacks
+add_action('admin_init', 'gf_upi_payment_register_settings');
+
+// Add your custom scripts here
+add_action('admin_enqueue_scripts', function() {
+    ?>
+    <script>
+    jQuery(document).ready(function($) {
+        // Example script
+        console.log("UPI Payment Plugin admin page loaded");
+    });
+    </script>
+    <?php
+});
