@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: Gravity Forms UPI Payment
-Plugin URI:  http://eworldservice.com
+Plugin URI:  http://yourwebsite.com
 Description: A plugin to integrate UPI payments with Gravity Forms.
 Version:     1.0
-Author:      sachin jangir
-Author URI:  http://eworldservice.com
+Author:      Your Name
+Author URI:  http://yourwebsite.com
 License:     GPL2
 */
 
@@ -43,3 +43,11 @@ function gf_upi_payment_admin_menu() {
     );
 }
 add_action('admin_menu', 'gf_upi_payment_admin_menu');
+
+function gf_upi_payment_enqueue_assets($hook_suffix) {
+    if ($hook_suffix == 'toplevel_page_gf-upi-payment') {
+        wp_enqueue_style('gf-upi-payment-styles', plugin_dir_url(__FILE__) . 'assets/css/styles.css');
+        wp_enqueue_script('gf-upi-payment-scripts', plugin_dir_url(__FILE__) . 'assets/js/scripts.js', array('jquery'), null, true);
+    }
+}
+add_action('admin_enqueue_scripts', 'gf_upi_payment_enqueue_assets');
