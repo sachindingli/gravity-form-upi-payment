@@ -1,1 +1,17 @@
 /* Add your custom styles here */
+.wrap h1 {
+    color: #23282d;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.wrap form {
+    background: #fff;
+    padding: 20px;
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+input.regular-text {
+    width: 25em;
+}
