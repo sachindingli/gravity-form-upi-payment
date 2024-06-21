@@ -38,5 +38,7 @@ function gf_upi_payment_main_section_callback() {
 
 function gf_upi_payment_upi_id_callback() {
     $upi_id = get_option('gf_upi_payment_upi_id');
-    echo '<input type="text" name="gf_upi_payment_upi_id" value="' . esc_attr($upi_id) . '" />';
+    ?>
+    <input type="text" name="gf_upi_payment_upi_id" value="<?php echo esc_attr($upi_id); ?>" class="regular-text" />
+    <?php
 }
