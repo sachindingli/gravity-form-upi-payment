@@ -50,17 +50,47 @@ class GFUPIPayment extends GFPaymentAddOn {
     }
 
     private function process_upi_payment($upi_id, $amount) {
-        // Implement the UPI payment gateway API call here
-        // Return a response object with success, transaction_id, and error_message properties
-        $response = new stdClass();
-        $response->success = true; // Or false based on API response
-        $response->transaction_id = '12345'; // Example transaction ID
-        $response->error_message = ''; // Example error message
+        // Get API URL from settings
+        $api_url = get_option('gf_upi_payment_api_url');
 
-        // Example of failure scenario
-        // $response->success = false;
-        // $response->error_message = 'Invalid UPI ID';
+        // Make API call to process UPI payment
+        $api_data = array(
+            'upi_id' => $upi_id,
+            'amount' => $amount,
+            // Add any other required parameters for your API
+        );
 
-        return $response;
+        $response = wp_remote_post($api_url, array(
+            'body' => $api_data,
+            'timeout' => 20,
+            'headers' => array(
+                'Content-Type' => 'application/json',
+            ),
+        ));
+
+        if (is_wp_error($response)) {
+            // Handle API call error
+            return (object) array(
+                'success' => false,
+                'error_message' => $response->get_error_message(),
+            );
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $api_response = json_decode($body);
+
+        if ($api_response->success) {
+            // Payment succeeded
+            return (object) array(
+                'success' => true,
+                'transaction_id' => $api_response->transaction_id,
+            );
+        } else {
+            // Payment failed
+            return (object) array(
+                'success' => false,
+                'error_message' => $api_response->error_message,
+            );
+        }
     }
 }
