@@ -2,7 +2,7 @@
 
 === Gravity Forms UPI Payment ===
 Contributors: yourname
-Donate link: http://yourwebsite.com
+Donate link: http://eworldservice.com
 Tags: gravity forms, UPI, payment
 Requires at least: 4.0
 Tested up to: 5.8
