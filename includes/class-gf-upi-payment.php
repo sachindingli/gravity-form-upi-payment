@@ -21,76 +21,85 @@ class GFUPIPayment extends GFPaymentAddOn {
     }
 
     public function pre_process_payment($feed, $submission_data, $form, $entry) {
-        // Get total amount from Gravity Form entry
-        $amount = GFCommon::get_order_total($form, $entry);
+    // Get total amount from Gravity Form entry
+    $amount = GFCommon::get_order_total($form, $entry);
 
-        // Get UPI ID from the settings
-        $upi_id = get_option('gf_upi_payment_upi_id');
-
-        // Call UPI payment gateway API
-        $response = $this->process_upi_payment($upi_id, $amount);
-
-        if ($response->success) {
-            // Payment succeeded
-            $entry['payment_status'] = 'Paid';
-            $entry['payment_date'] = gmdate('Y-m-d H:i:s');
-            $entry['transaction_id'] = $response->transaction_id;
-            GFAPI::update_entry($entry);
-        } else {
-            // Payment failed
-            $entry['payment_status'] = 'Failed';
-            GFAPI::update_entry($entry);
-            GFFormsModel::add_note(
-                $entry['id'],
-                0,
-                __('System', 'gravityforms'),
-                __('UPI Payment Failed: ' . $response->error_message, 'gravityforms')
-            );
-        }
+    // Get UPI ID from the settings
+    $upi_id = get_option('gf_upi_payment_upi_id');
+    if (empty($upi_id)) {
+        // UPI ID is not set, log an error and return
+        $this->log_debug(__METHOD__ . '(): UPI ID is not set in the settings.');
+        return;
     }
 
-    private function process_upi_payment($upi_id, $amount) {
-        // Get API URL from settings
-        $api_url = get_option('gf_upi_payment_api_url');
+    // Get API URL from the settings
+    $api_url = get_option('gf_upi_payment_api_url');
+    if (empty($api_url)) {
+        // API URL is not set, log an error and return
+        $this->log_debug(__METHOD__ . '(): API URL is not set in the settings.');
+        return;
+    }
 
-        // Make API call to process UPI payment
-        $api_data = array(
-            'upi_id' => $upi_id,
-            'amount' => $amount,
-            // Add any other required parameters for your API
+    // Call UPI payment gateway API
+    $response = $this->process_upi_payment($upi_id, $amount, $api_url);
+
+    if ($response->success) {
+        // Payment succeeded
+        $entry['payment_status'] = 'Paid';
+        $entry['payment_date'] = gmdate('Y-m-d H:i:s');
+        $entry['transaction_id'] = $response->transaction_id;
+        GFAPI::update_entry($entry);
+    } else {
+        // Payment failed
+        $entry['payment_status'] = 'Failed';
+        GFAPI::update_entry($entry);
+        GFFormsModel::add_note(
+            $entry['id'],
+            0,
+            __('System', 'gravityforms'),
+            __('UPI Payment Failed: ' . $response->error_message, 'gravityforms')
         );
+    }
+}
 
-        $response = wp_remote_post($api_url, array(
-            'body' => $api_data,
-            'timeout' => 20,
-            'headers' => array(
-                'Content-Type' => 'application/json',
-            ),
-        ));
+private function process_upi_payment($upi_id, $amount, $api_url) {
+    // Make API call to process UPI payment
+    $api_data = array(
+        'upi_id' => $upi_id,
+        'amount' => $amount,
+        // Add any other required parameters for your API
+    );
 
-        if (is_wp_error($response)) {
-            // Handle API call error
-            return (object) array(
-                'success' => false,
-                'error_message' => $response->get_error_message(),
-            );
-        }
+    $response = wp_remote_post($api_url, array(
+        'body' => $api_data,
+        'timeout' => 20,
+        'headers' => array(
+            'Content-Type' => 'application/json',
+        ),
+    ));
 
-        $body = wp_remote_retrieve_body($response);
-        $api_response = json_decode($body);
+    if (is_wp_error($response)) {
+        // Handle API call error
+        return (object) array(
+            'success' => false,
+            'error_message' => $response->get_error_message(),
+        );
+    }
 
-        if ($api_response->success) {
-            // Payment succeeded
-            return (object) array(
-                'success' => true,
-                'transaction_id' => $api_response->transaction_id,
-            );
-        } else {
-            // Payment failed
-            return (object) array(
-                'success' => false,
-                'error_message' => $api_response->error_message,
-            );
-        }
+    $body = wp_remote_retrieve_body($response);
+    $api_response = json_decode($body);
+
+    if ($api_response->success) {
+        // Payment succeeded
+        return (object) array(
+            'success' => true,
+            'transaction_id' => $api_response->transaction_id,
+        );
+    } else {
+        // Payment failed
+        return (object) array(
+            'success' => false,
+            'error_message' => $api_response->error_message,
+        );
     }
 }
